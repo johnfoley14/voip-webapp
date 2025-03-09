@@ -9,3 +9,5 @@ sudo systemctl status nginx
 sudo systemctl restart nginx
 sudo systemctl stop nginx
 sudo systemctl start nginx
+
+sudo mv /home/ubuntu/voip-webapp/voip/dist/* /var/www/html/
