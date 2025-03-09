@@ -8,7 +8,7 @@ const Caller: React.FC = () => {
 
   useEffect(() => {
     // Establish WebSocket connection to the signaling server
-    wsRef.current = new WebSocket("ws://localhost:3000");
+    wsRef.current = new WebSocket("wss://52.208.237.220:3000");
 
     wsRef.current.onopen = () => {
       console.log("WebSocket connected");
