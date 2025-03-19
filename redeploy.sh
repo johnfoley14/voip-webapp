@@ -1,15 +1,15 @@
 #!/bin/bash
-
+echo "here
 # Define variables
 BUILD_DIR="~/voip-webapp/voip/dist"
 TARGET_DIR="/var/www/html"
-
+echo "here2"
 # Stop the script if any command fails
-set -e
+sudo set -e
 
-echo "Installing dependencies..."
-cd ~/voip-webapp/voip
-npm install
+sudo echo "Installing dependencies..."
+sudo cd ~/voip-webapp/voip
+sudo npm install
 
 echo "Building project..."
 npm run build
