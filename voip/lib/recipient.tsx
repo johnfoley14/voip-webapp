@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 
 const Receiver: React.FC = () => {
-  const [isReceiving, setIsReceiving] = useState<boolean>(false);
-  const [isAccepted, setIsAccepted] = useState<boolean>(false);
+  const [receivedMessage, setReceivedMessage] = useState<string>("");
+  const [isConnected, setIsConnected] = useState<boolean>(false);
   const wsRef = useRef<WebSocket | null>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
+  const dataChannelRef = useRef<RTCDataChannel | null>(null);
 
   useEffect(() => {
     console.log("Connecting to WebSocket signaling server...");
@@ -30,22 +31,32 @@ const Receiver: React.FC = () => {
     };
 
     return () => {
-      console.log("Closing WebSocket...");
-      if (wsRef.current) {
-        wsRef.current.close();
-      }
+      wsRef.current?.close();
     };
   }, []);
 
   const setupPeerConnection = (): RTCPeerConnection => {
     console.log("Setting up RTCPeerConnection...");
     const pc = new RTCPeerConnection({
-      iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+      iceServers: [
+        { urls: "stun:52.208.237.220:3478" },
+        // {
+        //   urls: "turn:52.208.237.220:3478?transport=tcp", // TURN over TCP
+        //   username: "user",
+        //   credential: "isevoip",
+        // },
+      ],
+      // iceTransportPolicy: "all",
     });
 
     pc.onicecandidate = (event) => {
       if (event.candidate) {
-        console.log("Sending ICE candidate to Tim:", event.candidate);
+        const candidate = event.candidate.candidate;
+        // if (candidate.includes("udp")) {
+        //   console.log("Ignoring UDP candidate:", candidate);
+        //   return;
+        // }   --- uncommenting this fails connection
+        console.log("Using candidate:", candidate);
         wsRef.current?.send(
           JSON.stringify({
             type: "ice-candidate",
@@ -56,17 +67,21 @@ const Receiver: React.FC = () => {
       }
     };
 
-    pc.ontrack = (event) => {
-      console.log("Received remote track:", event.streams[0]);
-      const remoteStream = event.streams[0];
-      const remoteVideo = document.getElementById(
-        "remoteVideo"
-      ) as HTMLVideoElement;
-      remoteVideo.srcObject = remoteStream;
-    };
+    pc.ondatachannel = (event) => {
+      console.log("Data channel received!");
+      const dataChannel = event.channel;
 
-    pc.onconnectionstatechange = () => {
-      console.log("PeerConnection state changed:", pc.connectionState);
+      dataChannel.onopen = () => {
+        console.log("Data channel open!");
+        setIsConnected(true);
+      };
+
+      dataChannel.onmessage = (event) => {
+        console.log("Message received:", event.data);
+        setReceivedMessage(event.data);
+      };
+
+      dataChannelRef.current = dataChannel;
     };
 
     return pc;
@@ -93,7 +108,6 @@ const Receiver: React.FC = () => {
     );
 
     console.log("Sent answer to Tim");
-    setIsReceiving(true);
   };
 
   const handleIceCandidate = (message: any) => {
@@ -107,15 +121,9 @@ const Receiver: React.FC = () => {
   return (
     <div>
       <h1>Receiver (Jim)</h1>
-      {!isReceiving && <p>Waiting for call...</p>}
-      {isReceiving && !isAccepted && (
-        <div>
-          <p>Call received from Tim. Accept?</p>
-          <button onClick={() => setIsAccepted(true)}>Accept</button>
-        </div>
-      )}
-      {isAccepted && <p>Call Accepted!</p>}
-      <video id="remoteVideo" autoPlay playsInline width="300" height="200" />
+      {!isConnected && <p>Waiting for connection...</p>}
+      {isConnected && <p>Connected to Tim. You can receive messages!</p>}
+      {receivedMessage && <p>Message from Tim: {receivedMessage}</p>}
     </div>
   );
 };
