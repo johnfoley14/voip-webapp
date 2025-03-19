@@ -8,6 +8,8 @@ import ButtonComponent from "../ui_components/buttons";
 const SYSTEM_HASH =
   "57a008896c76ea83b5a1bf79426c1e7905e80da05e7c5b057039c2caeceae06a";
 
+const server_ip = "3.254.201.195";
+
 // Function to hash input using SHA-256
 async function hashInput(input: any) {
   const encoder = new TextEncoder();
@@ -36,8 +38,14 @@ function App() {
         {authenticated ? (
           <Routes>
             <Route index element={<ButtonComponent />} />
-            <Route path={"make-call"} element={<Caller />} />
-            <Route path={"answer-call"} element={<Receiver />} />
+            <Route
+              path={"make-call"}
+              element={<Caller server_ip={server_ip} />}
+            />
+            <Route
+              path={"answer-call"}
+              element={<Receiver server_ip={server_ip} />}
+            />
           </Routes>
         ) : (
           <div className="button-container">

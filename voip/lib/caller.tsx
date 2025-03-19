@@ -1,6 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 
-const Caller: React.FC = () => {
+interface CallerProps {
+  server_ip: string;
+}
+
+const Caller: React.FC<CallerProps> = ({ server_ip }) => {
   const [users, setUsers] = useState<string[]>([]);
   const [message, setMessage] = useState<string>("");
   const [receivedMessage, setReceivedMessage] = useState<string>("");
@@ -11,7 +15,7 @@ const Caller: React.FC = () => {
 
   useEffect(() => {
     console.log("Connecting to WebSocket signaling server...");
-    wsRef.current = new WebSocket("wss://52.208.237.220:3000");
+    wsRef.current = new WebSocket(`wss://${server_ip}:3000`);
 
     wsRef.current.onopen = () => {
       console.log("WebSocket connected");
@@ -55,7 +59,7 @@ const Caller: React.FC = () => {
     console.log(`Setting up RTCPeerConnection with ${recipient}...`);
     const pc = new RTCPeerConnection({
       iceServers: [
-        { urls: "stun:52.208.237.220:3478" },
+        { urls: `stun:${server_ip}:3478` },
         // {
         //   urls: "turn:52.208.237.220:3478?transport=tcp", // TURN over TCP
         //   username: "user",
