@@ -9,7 +9,7 @@ const SYSTEM_HASH =
   "57a008896c76ea83b5a1bf79426c1e7905e80da05e7c5b057039c2caeceae06a";
 
 // Function to hash input using SHA-256
-async function hashInput(input) {
+async function hashInput(input: any) {
   const encoder = new TextEncoder();
   const data = encoder.encode(input);
   const hashBuffer = await crypto.subtle.digest("SHA-256", data);
