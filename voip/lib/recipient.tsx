@@ -17,7 +17,6 @@ const Receiver: React.FC = () => {
     };
 
     wsRef.current.onmessage = (event) => {
-      console.log("WebSocket message received:", event.data);
       const message = JSON.parse(event.data);
       if (message.type === "offer") {
         handleOffer(message);
@@ -93,11 +92,9 @@ const Receiver: React.FC = () => {
     peerConnectionRef.current = pc;
 
     await pc.setRemoteDescription(new RTCSessionDescription(message.offer));
-    console.log("Set remote description");
 
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
-    console.log("Created and set local description for answer");
 
     wsRef.current?.send(
       JSON.stringify({
@@ -106,7 +103,6 @@ const Receiver: React.FC = () => {
         answer: answer,
       })
     );
-
     console.log("Sent answer to Tim");
   };
 

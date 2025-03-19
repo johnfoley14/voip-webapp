@@ -19,7 +19,6 @@ const Caller: React.FC = () => {
     };
 
     wsRef.current.onmessage = (event) => {
-      console.log("WebSocket message received:", event.data);
       const message = JSON.parse(event.data);
       if (message.type === "answer") {
         handleAnswer(message);
