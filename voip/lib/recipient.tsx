@@ -12,7 +12,6 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip }) => {
   const dataChannelRef = useRef<RTCDataChannel | null>(null);
 
   useEffect(() => {
-    console.log("Connecting to WebSocket signaling server...");
     wsRef.current = new WebSocket(`wss://${server_ip}:3000`);
 
     wsRef.current.onopen = () => {
@@ -41,25 +40,14 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip }) => {
   const setupPeerConnection = (): RTCPeerConnection => {
     console.log("Setting up RTCPeerConnection...");
     const pc = new RTCPeerConnection({
-      iceServers: [
-        { urls: `stun:${server_ip}:3478` },
-        // {
-        //   urls: "turn:52.208.237.220:3478?transport=tcp", // TURN over TCP
-        //   username: "user",
-        //   credential: "isevoip",
-        // },
-      ],
-      // iceTransportPolicy: "all",
+      iceServers: [{ urls: `stun:${server_ip}:3478` }],
+      iceTransportPolicy: "all",
     });
 
     pc.onicecandidate = (event) => {
       if (event.candidate) {
         const candidate = event.candidate.candidate;
-        // if (candidate.includes("udp")) {
-        //   console.log("Ignoring UDP candidate:", candidate);
-        //   return;
-        // }   --- uncommenting this fails connection
-        console.log("Using candidate:", candidate);
+        console.log("Using candidate: ", candidate);
         wsRef.current?.send(
           JSON.stringify({
             type: "ice-candidate",
@@ -86,7 +74,6 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip }) => {
 
       dataChannelRef.current = dataChannel;
     };
-
     return pc;
   };
 
