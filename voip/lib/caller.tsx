@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import connectToLocalWebSocket from "../utils/web_socket_connect";
 
 interface CallerProps {
   server_ip: string;
@@ -98,7 +99,8 @@ const Caller: React.FC<CallerProps> = ({ server_ip }) => {
     try {
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
-
+      console.log("connecting to ws");
+      connectToLocalWebSocket(); // This function is not defined
       wsRef.current?.send(
         JSON.stringify({
           type: "offer",
