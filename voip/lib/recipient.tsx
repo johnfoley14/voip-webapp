@@ -13,6 +13,13 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip }) => {
 
   useEffect(() => {
     wsRef.current = new WebSocket(`wss://${server_ip}:3000`);
+    fetch("http://localhost:5000/load_model", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: "Hello world" }),
+    })
+      .then((r) => r.json())
+      .then((data) => console.log("Response:", data));
 
     wsRef.current.onopen = () => {
       console.log("WebSocket connected");
