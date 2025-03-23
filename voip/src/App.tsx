@@ -20,6 +20,7 @@ async function hashInput(input: any) {
 }
 
 function App() {
+  const [name, setName] = React.useState("");
   const [inputValue, setInputValue] = React.useState("");
   const [authenticated, setAuthenticated] = React.useState(false);
 
@@ -40,20 +41,25 @@ function App() {
             <Route index element={<ButtonComponent />} />
             <Route
               path={"make-call"}
-              element={<Caller server_ip={server_ip} />}
+              element={<Caller server_ip={server_ip} name={name} />}
             />
             <Route
               path={"answer-call"}
-              element={<Receiver server_ip={server_ip} />}
+              element={<Receiver server_ip={server_ip} name={name} />}
             />
           </Routes>
         ) : (
           <div className="button-container">
             <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your name"
+            />
+            <input
               type="password"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Enter secret"
+              placeholder="Enter server secret"
             />
             <button className="button" onClick={handleButtonClick}>
               Submit

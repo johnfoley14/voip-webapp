@@ -2,10 +2,12 @@ import React, { useState, useRef, useEffect } from "react";
 
 interface ReceiverProps {
   server_ip: string;
+  name: string;
 }
 
-const Receiver: React.FC<ReceiverProps> = ({ server_ip }) => {
+const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
   const [receivedMessage, setReceivedMessage] = useState<string>("");
+  const [caller, setCaller] = useState<string>("");
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const wsRef = useRef<WebSocket | null>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
@@ -13,17 +15,19 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip }) => {
 
   useEffect(() => {
     wsRef.current = new WebSocket(`wss://${server_ip}:3000`);
+
+    // Load text-to-speech model as soon as client starts listening
     fetch("http://localhost:5000/load_model", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: "Hello world" }),
     })
       .then((r) => r.json())
-      .then((data) => console.log("Response:", data));
+      .then((data) => console.log(data.message));
 
     wsRef.current.onopen = () => {
       console.log("WebSocket connected");
-      wsRef.current?.send(JSON.stringify({ type: "register", name: "jim" }));
+      wsRef.current?.send(JSON.stringify({ type: "register", name: name }));
     };
 
     wsRef.current.onmessage = (event) => {
@@ -75,6 +79,11 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip }) => {
       };
 
       dataChannel.onmessage = (event) => {
+        fetch("http://localhost:5000/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: "Hello world" }),
+        });
         console.log("Message received:", event.data);
         setReceivedMessage(event.data);
       };
@@ -85,7 +94,9 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip }) => {
   };
 
   const handleOffer = async (message: any) => {
-    console.log("Received offer from Tim:", message.offer);
+    setCaller(message.sender);
+    console.log(`Received offer from ${message.sender}:`, message.offer);
+
     const pc = setupPeerConnection();
     peerConnectionRef.current = pc;
 
@@ -97,15 +108,15 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip }) => {
     wsRef.current?.send(
       JSON.stringify({
         type: "answer",
-        to: "tim",
+        to: message.sender,
         answer: answer,
       })
     );
-    console.log("Sent answer to Tim");
+    console.log(`Sent answer to ${caller}`);
   };
 
   const handleIceCandidate = (message: any) => {
-    console.log("Received ICE candidate from Tim:", message.candidate);
+    console.log(`Received ICE candidate from ${caller}`, message.candidate);
     const pc = peerConnectionRef.current;
     if (pc) {
       pc.addIceCandidate(new RTCIceCandidate(message.candidate));
@@ -114,10 +125,10 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip }) => {
 
   return (
     <div>
-      <h1>Receiver (Jim)</h1>
+      <h1>Receiver ({name})</h1>
       {!isConnected && <p>Waiting for connection...</p>}
-      {isConnected && <p>Connected to Tim. You can receive messages!</p>}
-      {receivedMessage && <p>Message from Tim: {receivedMessage}</p>}
+      {isConnected && <p>Connected to {caller}. You can receive messages!</p>}
+      {receivedMessage && <p>Message: {receivedMessage}</p>}
     </div>
   );
 };
