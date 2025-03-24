@@ -9,7 +9,8 @@ function connectToSpeechToTextWebSocket(dataChannelRef: React.RefObject<RTCDataC
     };
   
     socket.onmessage = (event: MessageEvent): void => {
-      console.log("📥 Message received:", event.data);
+      const data = JSON.parse(event.data);
+      console.log("📥 Message received:", data);
       if (dataChannelRef.current) {
         dataChannelRef.current.send(event.data);
       }

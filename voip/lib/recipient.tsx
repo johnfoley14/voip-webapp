@@ -85,7 +85,8 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
           body: JSON.stringify({ text: "Hello world" }),
         });
         console.log("Message received:", event.data);
-        setReceivedMessage(event.data);
+        const message = JSON.parse(event.data);
+        setReceivedMessage((prev) => prev + "\n" + message.transcript);
       };
 
       dataChannelRef.current = dataChannel;
