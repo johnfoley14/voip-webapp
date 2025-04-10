@@ -54,6 +54,7 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
       iceServers: [{ urls: `stun:${server_ip}:3478` }],
       iceTransportPolicy: "all",
     });
+    console.log("sender: ", sender);
 
     pc.onicecandidate = (event) => {
       if (event.candidate) {
