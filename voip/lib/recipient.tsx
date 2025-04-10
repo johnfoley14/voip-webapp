@@ -48,7 +48,7 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
     };
   }, []);
 
-  const setupPeerConnection = (): RTCPeerConnection => {
+  const setupPeerConnection = (sender: string): RTCPeerConnection => {
     console.log("Setting up RTCPeerConnection...");
     const pc = new RTCPeerConnection({
       iceServers: [{ urls: `stun:${server_ip}:3478` }],
@@ -62,7 +62,7 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
         wsRef.current?.send(
           JSON.stringify({
             type: "ice-candidate",
-            to: "tim",
+            to: sender,
             candidate: event.candidate,
           })
         );
@@ -98,7 +98,7 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
     setCaller(message.sender);
     console.log(`Received offer from ${message.sender}:`, message.offer);
 
-    const pc = setupPeerConnection();
+    const pc = setupPeerConnection(message.sender);
     peerConnectionRef.current = pc;
 
     await pc.setRemoteDescription(new RTCSessionDescription(message.offer));

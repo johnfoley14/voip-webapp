@@ -151,6 +151,7 @@ const Caller: React.FC<CallerProps> = ({ server_ip, name }) => {
                 className="button"
                 key={user}
                 onClick={() => createOffer(user)}
+                style={{ marginRight: "10px", marginBottom: "10px" }}
               >
                 Call {user}
               </button>
