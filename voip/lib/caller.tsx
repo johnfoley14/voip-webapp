@@ -46,12 +46,12 @@ const Caller: React.FC<CallerProps> = ({ server_ip, name }) => {
 
   const fetchUsers = async () => {
     try {
-      // const response = await fetch(`https://${server_ip}:3000/get_users`);
-      // const data = await response.json();
-      // if (data.users) {
-      //   setUsers(data.users.filter((user: string) => user !== name)); // Exclude self
-      // }
-      setUsers(["user1", "user2", "user3"]); // Mock data for testing
+      const response = await fetch(`https://${server_ip}:3000/get_users`);
+      const data = await response.json();
+      if (data.users) {
+        setUsers(data.users.filter((user: string) => user !== name)); // Exclude self
+      }
+      // setUsers(["user1", "user2", "user3"]); // Mock data for testing
     } catch (error) {
       console.error("Error fetching users:", error);
     }
