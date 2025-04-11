@@ -114,7 +114,7 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
         answer: answer,
       })
     );
-    console.log(`Sent answer to ${caller}`);
+    console.log(`Sent answer to ${message.sender}`);
   };
 
   const handleIceCandidate = (message: any) => {
