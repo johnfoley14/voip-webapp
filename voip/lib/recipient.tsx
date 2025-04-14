@@ -51,7 +51,8 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
   const setupPeerConnection = (sender: string): RTCPeerConnection => {
     console.log("Setting up RTCPeerConnection...");
     const pc = new RTCPeerConnection({
-      iceServers: [{ urls: `stun:stun.l.google.com:19302` }],
+      iceServers: [{ urls: `stun:3.254.201.195:3478` }],
+      // iceServers: [{ urls: `stun:stun.l.google.com:19302` }],
       iceTransportPolicy: "all",
     });
     console.log("sender: ", sender);
