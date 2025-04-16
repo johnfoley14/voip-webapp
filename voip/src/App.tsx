@@ -5,6 +5,7 @@ import Receiver from "../lib/recipient";
 import { BrowserRouter, Routes, Route } from "react-router";
 import ButtonComponent from "../ui_components/buttons";
 import Notification, { showNotification } from "../ui_components/notification";
+import ProfileIcon from "../ui_components/profile_icon";
 
 const SYSTEM_HASH =
   "57a008896c76ea83b5a1bf79426c1e7905e80da05e7c5b057039c2caeceae06a";
@@ -39,17 +40,20 @@ function App() {
     <BrowserRouter>
       <div className="app">
         {authenticated ? (
-          <Routes>
-            <Route index element={<ButtonComponent />} />
-            <Route
-              path={"make-call"}
-              element={<Caller server_ip={server_ip} name={name} />}
-            />
-            <Route
-              path={"answer-call"}
-              element={<Receiver server_ip={server_ip} name={name} />}
-            />
-          </Routes>
+          <div>
+            <ProfileIcon name={name} />
+            <Routes>
+              <Route index element={<ButtonComponent />} />
+              <Route
+                path={"make-call"}
+                element={<Caller server_ip={server_ip} name={name} />}
+              />
+              <Route
+                path={"answer-call"}
+                element={<Receiver server_ip={server_ip} name={name} />}
+              />
+            </Routes>
+          </div>
         ) : (
           <div className="button-container">
             <input

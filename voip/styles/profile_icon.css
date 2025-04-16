@@ -1,0 +1,23 @@
+.profile-container {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+  }
+  
+  .profile-icon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #eee;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-family: sans-serif;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .profile-icon:hover {
+    background: #ddd;
+    transform: scale(1.05);
+  }
+  

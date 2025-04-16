@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import connectToSpeechToTextWebSocket from "../utils/web_socket_connect";
 import { showNotification } from "../ui_components/notification";
+import TranscriptViewer from "../ui_components/transcript_viewer";
 
 interface CallerProps {
   server_ip: string;
@@ -15,6 +16,7 @@ const Caller: React.FC<CallerProps> = ({ server_ip, name }) => {
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const dataChannelRef = useRef<RTCDataChannel | null>(null);
   const [recipient, setRecipient] = useState<string>("");
+  const [transcript, setTranscript] = useState<string>("");
 
   useEffect(() => {
     // connect to web socket signaling server
@@ -98,7 +100,7 @@ const Caller: React.FC<CallerProps> = ({ server_ip, name }) => {
     };
 
     dataChannelRef.current = dataChannel;
-    connectToSpeechToTextWebSocket(dataChannelRef);
+    connectToSpeechToTextWebSocket(dataChannelRef, setTranscript);
     return pc;
   };
 
@@ -171,20 +173,7 @@ const Caller: React.FC<CallerProps> = ({ server_ip, name }) => {
         </>
       )}
       {isConnected && (
-        <div>
-          <h1>Connected to {recipient}</h1>
-          <div className="button-container">
-            <input
-              type="text"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Type a message..."
-            />
-            <button className="button" onClick={sendMessage}>
-              Send
-            </button>
-          </div>
-        </div>
+        <TranscriptViewer name={recipient} transcript={transcript} />
       )}
     </div>
   );

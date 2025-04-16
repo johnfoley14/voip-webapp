@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { showNotification } from "../ui_components/notification";
+import Spinner from "../ui_components/spinner";
+import TranscriptViewer from "../ui_components/transcript_viewer";
 
 interface ReceiverProps {
   server_ip: string;
@@ -139,10 +141,22 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
 
   return (
     <div>
-      <h1>Receiver ({name})</h1>
-      {!isConnected && <p>Waiting for connection...</p>}
-      {isConnected && <p>Connected to {caller}. You can receive messages!</p>}
-      {receivedMessage && <p>Message: {receivedMessage}</p>}
+      {!isConnected && (
+        <p
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            fontSize: "18px",
+            fontFamily: "Arial, sans-serif",
+          }}
+        >
+          Waiting for connection <Spinner />
+        </p>
+      )}
+      {isConnected && (
+        <TranscriptViewer name={caller} transcript={receivedMessage} />
+      )}
     </div>
   );
 };
