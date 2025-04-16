@@ -1,4 +1,5 @@
 import React from "react";
+import { showNotification } from "../ui_components/notification";
 
 function connectToSpeechToTextWebSocket(dataChannelRef: React.RefObject<RTCDataChannel>): WebSocket {
     const stt_ws = "ws://localhost:8765"
@@ -6,11 +7,12 @@ function connectToSpeechToTextWebSocket(dataChannelRef: React.RefObject<RTCDataC
   
     socket.onopen = (): void => {
       console.log(`✅ Connected to speech-to-text server at ${stt_ws}`);
+      showNotification("Connected to local speech-to-text service");
     };
   
     socket.onmessage = (event: MessageEvent): void => {
       const data = JSON.parse(event.data);
-      console.log("📥 Message received:", data);
+      console.log("📥 From STT service: ", data);
       if (dataChannelRef.current) {
         dataChannelRef.current.send(event.data);
       }

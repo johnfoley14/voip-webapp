@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import connectToSpeechToTextWebSocket from "../utils/web_socket_connect";
+import { showNotification } from "../ui_components/notification";
 
 interface CallerProps {
   server_ip: string;
@@ -9,7 +10,6 @@ interface CallerProps {
 const Caller: React.FC<CallerProps> = ({ server_ip, name }) => {
   const [users, setUsers] = useState<string[]>([]);
   const [message, setMessage] = useState<string>("");
-  const [receivedMessage, setReceivedMessage] = useState<string>("");
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const wsRef = useRef<WebSocket | null>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
@@ -21,6 +21,7 @@ const Caller: React.FC<CallerProps> = ({ server_ip, name }) => {
     wsRef.current = new WebSocket(`wss://${server_ip}:3000`);
     wsRef.current.onopen = () => {
       console.log("WebSocket connected");
+      showNotification("Connected to signaling server");
       wsRef.current?.send(JSON.stringify({ type: "register", name: name }));
     };
 
@@ -46,12 +47,12 @@ const Caller: React.FC<CallerProps> = ({ server_ip, name }) => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch(`https://${server_ip}:3000/get_users`);
-      const data = await response.json();
-      if (data.users) {
-        setUsers(data.users.filter((user: string) => user !== name)); // Exclude self
-      }
-      // setUsers(["user1", "user2", "user3"]); // Mock data for testing
+      // const response = await fetch(`https://${server_ip}:3000/get_users`);
+      // const data = await response.json();
+      // if (data.users) {
+      //   setUsers(data.users.filter((user: string) => user !== name)); // Exclude self
+      // }
+      setUsers(["user1", "user2", "user3"]); // Mock data for testing
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -60,9 +61,15 @@ const Caller: React.FC<CallerProps> = ({ server_ip, name }) => {
   const setupPeerConnection = (recipient: string): RTCPeerConnection => {
     console.log(`Setting up RTCPeerConnection with ${recipient}...`);
     const pc = new RTCPeerConnection({
-      iceServers: [{ urls: `stun:3.254.201.195:3478` }],
-      // iceServers: [{ urls: `stun:stun.l.google.com:19302` }],
-      iceTransportPolicy: "all",
+      iceServers: [
+        { urls: `stun:${server_ip}:3478` },
+        {
+          urls: `turn:${server_ip}:3478`,
+          username: "unused",
+          credential: "unused",
+        },
+      ],
+      iceTransportPolicy: "all", // "relay" for turn only
     });
 
     pc.onicecandidate = (event) => {
@@ -86,12 +93,8 @@ const Caller: React.FC<CallerProps> = ({ server_ip, name }) => {
     const dataChannel = pc.createDataChannel("chat");
     dataChannel.onopen = () => {
       console.log("Data channel open!");
+      showNotification(`Connected to ${recipient}`);
       setIsConnected(true);
-    };
-
-    dataChannel.onmessage = (event) => {
-      console.log("Message received:", event.data);
-      setReceivedMessage(event.data);
     };
 
     dataChannelRef.current = dataChannel;
@@ -183,7 +186,6 @@ const Caller: React.FC<CallerProps> = ({ server_ip, name }) => {
           </div>
         </div>
       )}
-      {receivedMessage && <p>Message received: {receivedMessage}</p>}
     </div>
   );
 };

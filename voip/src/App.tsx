@@ -4,6 +4,7 @@ import Caller from "../lib/caller";
 import Receiver from "../lib/recipient";
 import { BrowserRouter, Routes, Route } from "react-router";
 import ButtonComponent from "../ui_components/buttons";
+import Notification, { showNotification } from "../ui_components/notification";
 
 const SYSTEM_HASH =
   "57a008896c76ea83b5a1bf79426c1e7905e80da05e7c5b057039c2caeceae06a";
@@ -28,8 +29,9 @@ function App() {
     const hashedInput = await hashInput(inputValue);
     if (hashedInput === SYSTEM_HASH) {
       setAuthenticated(true);
+      showNotification("Successfully authenticated");
     } else {
-      alert("Invalid hash. Access denied.");
+      showNotification("Invalid server secret");
     }
   };
 
@@ -66,6 +68,7 @@ function App() {
             </button>
           </div>
         )}
+        <Notification />
       </div>
     </BrowserRouter>
   );

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { showNotification } from "../ui_components/notification";
 
 interface ReceiverProps {
   server_ip: string;
@@ -27,6 +28,7 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
 
     wsRef.current.onopen = () => {
       console.log("WebSocket connected");
+      showNotification("Connected to signaling server");
       wsRef.current?.send(JSON.stringify({ type: "register", name: name }));
     };
 
@@ -51,9 +53,17 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
   const setupPeerConnection = (sender: string): RTCPeerConnection => {
     console.log("Setting up RTCPeerConnection...");
     const pc = new RTCPeerConnection({
-      iceServers: [{ urls: `stun:3.254.201.195:3478` }],
+      iceServers: [
+        {
+          urls: "turn:3.254.201.195:3478",
+          username: "unused",
+          credential: "unused",
+        },
+      ],
+      iceTransportPolicy: "relay",
+      // iceServers: [{ urls: `stun:3.254.201.195:3478` }],
       // iceServers: [{ urls: `stun:stun.l.google.com:19302` }],
-      iceTransportPolicy: "all",
+      // iceTransportPolicy: "all",
     });
     console.log("sender: ", sender);
 
@@ -77,17 +87,18 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
 
       dataChannel.onopen = () => {
         console.log("Data channel open!");
+        showNotification(`Connected to caller ${caller}`);
         setIsConnected(true);
       };
 
       dataChannel.onmessage = (event) => {
+        const message = JSON.parse(event.data);
         fetch("http://localhost:5000/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: "Hello world" }),
+          body: JSON.stringify({ text: message.transcript }),
         });
         console.log("Message received:", event.data);
-        const message = JSON.parse(event.data);
         setReceivedMessage((prev) => prev + "\n" + message.transcript);
       };
 
