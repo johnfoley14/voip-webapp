@@ -23,7 +23,7 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
     fetch("http://localhost:5000/load_model", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: "Hello world" }),
+      body: JSON.stringify({}),
     })
       .then((r) => r.json())
       .then((data) => console.log(data.message));
@@ -95,13 +95,16 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
 
       dataChannel.onmessage = (event) => {
         const message = JSON.parse(event.data);
-        fetch("http://localhost:5000/", {
+        message["recipient-posted-at"] = Date.now();
+
+        fetch("http://localhost:5000/translate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: message.transcript }),
+          body: JSON.stringify({ text: message }),
         });
-        console.log("Message received:", event.data);
-        setReceivedMessage((prev) => prev + "\n" + message.transcript);
+
+        console.log("Message received:", message);
+        setReceivedMessage((prev) => prev + message.transcript + "\n");
       };
 
       dataChannelRef.current = dataChannel;

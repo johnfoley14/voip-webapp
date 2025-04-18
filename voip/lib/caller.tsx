@@ -10,7 +10,6 @@ interface CallerProps {
 
 const Caller: React.FC<CallerProps> = ({ server_ip, name }) => {
   const [users, setUsers] = useState<string[]>([]);
-  const [message, setMessage] = useState<string>("");
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const wsRef = useRef<WebSocket | null>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
@@ -139,14 +138,6 @@ const Caller: React.FC<CallerProps> = ({ server_ip, name }) => {
     const pc = peerConnectionRef.current;
     if (pc) {
       pc.addIceCandidate(new RTCIceCandidate(message.candidate));
-    }
-  };
-
-  const sendMessage = () => {
-    if (dataChannelRef.current && message.trim() !== "") {
-      dataChannelRef.current.send(message);
-      console.log("Message sent:", message);
-      setMessage("");
     }
   };
 

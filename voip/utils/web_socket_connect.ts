@@ -15,6 +15,7 @@ function connectToSpeechToTextWebSocket(
 
   socket.onmessage = (event: MessageEvent): void => {
     const data = JSON.parse(event.data);
+    data["caller-posted-at"] = Date.now()
     console.log("📥 From STT service: ", data);
 
     if (data.transcript) {
@@ -22,7 +23,7 @@ function connectToSpeechToTextWebSocket(
     }
 
     if (dataChannelRef.current) {
-      dataChannelRef.current.send(event.data);
+      dataChannelRef.current.send(JSON.stringify(data));
     }
   };
 
