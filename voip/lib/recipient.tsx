@@ -100,7 +100,7 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
         fetch("http://localhost:5000/translate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: message }),
+          body: JSON.stringify(message),
         });
 
         console.log("Message received:", message);
