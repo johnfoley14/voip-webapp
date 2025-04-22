@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { showNotification } from "../ui_components/notification";
-import Spinner from "../ui_components/spinner";
-import TranscriptViewer from "../ui_components/transcript_viewer";
+import { showNotification } from "./notification";
+import Spinner from "./spinner";
+import TranscriptViewer from "./transcript_viewer";
 
 interface ReceiverProps {
   server_ip: string;

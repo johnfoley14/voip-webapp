@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
-import Caller from "../lib/caller";
-import Receiver from "../lib/recipient";
+import Caller from "../ui_components/caller";
+import Receiver from "../ui_components/recipient";
 import { BrowserRouter, Routes, Route } from "react-router";
 import ButtonComponent from "../ui_components/buttons";
 import Notification, { showNotification } from "../ui_components/notification";

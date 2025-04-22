@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import connectToSpeechToTextWebSocket from "../utils/web_socket_connect";
-import { showNotification } from "../ui_components/notification";
-import TranscriptViewer from "../ui_components/transcript_viewer";
+import { showNotification } from "./notification";
+import TranscriptViewer from "./transcript_viewer";
 
 interface CallerProps {
   server_ip: string;
