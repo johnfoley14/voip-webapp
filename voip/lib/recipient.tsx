@@ -56,23 +56,24 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
     console.log("Setting up RTCPeerConnection...");
     const pc = new RTCPeerConnection({
       iceServers: [
+        { urls: `stun:${server_ip}:3478` },
         {
-          urls: "turn:3.254.201.195:3478",
+          urls: `turn:${server_ip}:3478`,
           username: "unused",
           credential: "unused",
         },
       ],
-      iceTransportPolicy: "relay",
+      iceTransportPolicy: "all",
       // iceServers: [{ urls: `stun:3.254.201.195:3478` }],
       // iceServers: [{ urls: `stun:stun.l.google.com:19302` }],
       // iceTransportPolicy: "all",
     });
-    console.log("sender: ", sender);
+    console.log("Creating connection with: ", sender);
 
     pc.onicecandidate = (event) => {
       if (event.candidate) {
         const candidate = event.candidate.candidate;
-        console.log("Using candidate: ", candidate);
+        console.log(`Sending candidate to ${sender}: `, candidate);
         wsRef.current?.send(
           JSON.stringify({
             type: "ice-candidate",
@@ -97,7 +98,7 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
         const message = JSON.parse(event.data);
         message["recipient-posted-at"] = Date.now();
 
-        fetch("http://localhost:5000/translate", {
+        fetch("http://localhost:5000/synthesis", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(message),
@@ -135,7 +136,10 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
   };
 
   const handleIceCandidate = (message: any) => {
-    console.log(`Received ICE candidate from ${caller}`, message.candidate);
+    console.log(
+      `Received ICE candidate from ${message.sender}`,
+      message.candidate
+    );
     const pc = peerConnectionRef.current;
     if (pc) {
       pc.addIceCandidate(new RTCIceCandidate(message.candidate));

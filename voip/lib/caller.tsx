@@ -76,7 +76,7 @@ const Caller: React.FC<CallerProps> = ({ server_ip, name }) => {
     pc.onicecandidate = (event) => {
       if (event.candidate) {
         const candidate = event.candidate.candidate;
-        console.log("Using candidate:", candidate);
+        console.log(`Sending candidate to ${recipient}: `, candidate);
         wsRef.current?.send(
           JSON.stringify({
             type: "ice-candidate",
@@ -134,7 +134,10 @@ const Caller: React.FC<CallerProps> = ({ server_ip, name }) => {
   };
 
   const handleIceCandidate = (message: any) => {
-    console.log("Received ICE candidate:", message.candidate);
+    console.log(
+      `Received ICE candidate from ${message.sender}`,
+      message.candidate
+    );
     const pc = peerConnectionRef.current;
     if (pc) {
       pc.addIceCandidate(new RTCIceCandidate(message.candidate));

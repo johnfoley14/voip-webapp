@@ -7,10 +7,10 @@ import ButtonComponent from "../ui_components/buttons";
 import Notification, { showNotification } from "../ui_components/notification";
 import ProfileIcon from "../ui_components/profile_icon";
 
+const server_ip = "3.254.201.195";
+
 const SYSTEM_HASH =
   "57a008896c76ea83b5a1bf79426c1e7905e80da05e7c5b057039c2caeceae06a";
-
-const server_ip = "3.254.201.195";
 
 // Function to hash input using SHA-256
 async function hashInput(input: any) {
