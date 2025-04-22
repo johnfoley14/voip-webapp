@@ -136,10 +136,7 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
   };
 
   const handleIceCandidate = (message: any) => {
-    console.log(
-      `Received ICE candidate from ${message.sender}`,
-      message.candidate
-    );
+    console.log("Received ICE candidate: ", message.candidate);
     const pc = peerConnectionRef.current;
     if (pc) {
       pc.addIceCandidate(new RTCIceCandidate(message.candidate));
