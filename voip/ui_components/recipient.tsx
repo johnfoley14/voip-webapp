@@ -84,6 +84,30 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
       }
     };
 
+    pc.oniceconnectionstatechange = () => {
+      console.log("ICE connection state:", pc.iceConnectionState);
+      if (pc.iceConnectionState === "connected") {
+        logSelectedCandidatePair();
+      }
+    };
+
+    async function logSelectedCandidatePair() {
+      const stats = await pc.getStats();
+      stats.forEach((report) => {
+        if (report.type === "candidate-pair" && report.selected) {
+          const local = stats.get(report.localCandidateId);
+          const remote = stats.get(report.remoteCandidateId);
+          const isRelay =
+            local.candidateType === "relay" || remote.candidateType === "relay";
+
+          console.log(
+            "Connection Type:",
+            isRelay ? "TURN (relay)" : "Direct P2P"
+          );
+        }
+      });
+    }
+
     pc.ondatachannel = (event) => {
       console.log("Data channel received!");
       const dataChannel = event.channel;

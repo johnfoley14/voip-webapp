@@ -87,10 +87,6 @@ const Caller: React.FC<CallerProps> = ({ server_ip, name }) => {
       }
     };
 
-    pc.oniceconnectionstatechange = () => {
-      console.log("ICE connection state:", pc.iceConnectionState);
-    };
-
     const dataChannel = pc.createDataChannel("chat");
     dataChannel.onopen = () => {
       console.log("Data channel open!");
