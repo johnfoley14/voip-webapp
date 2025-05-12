@@ -12,7 +12,7 @@ interface ReceiverProps {
 const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
   const [receivedMessage, setReceivedMessage] = useState<string>("");
   const [caller, setCaller] = useState<string>("");
-  const [isConnected, setIsConnected] = useState<boolean>(true);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
   const wsRef = useRef<WebSocket | null>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const dataChannelRef = useRef<RTCDataChannel | null>(null);
