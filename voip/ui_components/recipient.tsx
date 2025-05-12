@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { showNotification } from "./notification";
 import Spinner from "./spinner";
 import TranscriptViewer from "./transcript_viewer";
+import VoiceSelector from "./voice_selector";
 
 interface ReceiverProps {
   server_ip: string;
@@ -11,7 +12,7 @@ interface ReceiverProps {
 const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
   const [receivedMessage, setReceivedMessage] = useState<string>("");
   const [caller, setCaller] = useState<string>("");
-  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [isConnected, setIsConnected] = useState<boolean>(true);
   const wsRef = useRef<WebSocket | null>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const dataChannelRef = useRef<RTCDataChannel | null>(null);
@@ -183,7 +184,10 @@ const Receiver: React.FC<ReceiverProps> = ({ server_ip, name }) => {
         </p>
       )}
       {isConnected && (
-        <TranscriptViewer name={caller} transcript={receivedMessage} />
+        <div>
+          <VoiceSelector />
+          <TranscriptViewer name={caller} transcript={receivedMessage} />
+        </div>
       )}
     </div>
   );

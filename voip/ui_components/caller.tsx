@@ -38,11 +38,9 @@ const Caller: React.FC<CallerProps> = ({ server_ip, name }) => {
     wsRef.current.onerror = (error) => {
       console.error("WebSocket error:", error);
     };
-
     fetchUsers(); // Fetch users when the component loads
-
     return () => {
-      wsRef.current?.close();
+      wsRef.current?.close(); // close the WebSocket connection when the component unmounts
     };
   }, []);
 
