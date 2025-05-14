@@ -7,6 +7,10 @@ The same issue will arise with the signaling server. Hence please visit 3.254.20
 
 To access the core functionalities of the webpage, the server secret is required. Please use "isevoip" to bypass this authentication. Any username can be used. 
 
+# source code
+
+Important source code discussed in the project report can be found at ./voip-webapp/voip/ui_components
+
 # nginx deployment
 sudo nginx -t
 
